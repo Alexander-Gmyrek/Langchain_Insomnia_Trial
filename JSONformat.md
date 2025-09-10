@@ -1,26 +1,26 @@
 # JSON format #  
-JSONformats are simple explenations of how a JSON should be formated. 
+JSONformats are simple explanations of how a JSON should be formatted. 
 Each entry should contain the element, the type of element, 
 description of the element, and notes.    
 
 
 ### Element ###  
 This should just be the name of the element. E.g firstName, date, or fileFormat. 
-The element name should be simple, explanitory, and camel cased if nessicary.  
+The element name should be simple, explanatory, and camel cased if necessary.  
 
 
 ### Type ###
 This is the datatype of the element and should be taken from a standard list of types.  
 ##### Types: #####  
 ###### Basic Types: ######  
-- String: A basic string  
-- Int: A basic integer  
-- Float: All non integer number values  
-- Boolean: True or False, 1 or 0  
+- string: A basic string  
+- int: A basic integer  
+- float: All non integer number values  
+- boolean: True or False  
 ###### Class Types: ######  
-- Category: A class of element that can only have set values (category(string))  
-- Array: An unlabeled list of elements with a specified type (array(int))  
-- Object: An element with subelements inside it.
+- category: A class of element that can only have set values (category(string))  
+- array: An unlabeled list of elements with a specified type (array(int))  
+- object: An element with subelements inside it.
 
 
 ### Description ###
@@ -28,11 +28,12 @@ A brief description of the element.
 
 
 ### Notes ###  
-Contain infromation on formating, gathering, identifying, or location if absolutely nessicary.
-Also where information on possible values for categorys and higher and lower bounds of values are stored.   
+Contain information on formatting, gathering, identifying, or location if absolutely necessary.
+Also where information on possible values for categories, regex patterns, allowed value ranges, reference links, etc.   
 
 
 ### Template ###
+```json
 [
   {
     "element": "{{elementName}}",
@@ -48,7 +49,7 @@ Also where information on possible values for categorys and higher and lower bou
   },
   {
     "element": "{{objectElement}}",
-    "type": "Object",
+    "type": "object",
     "description": "{{brief description of the object}}",
     "notes": "{{notes about the object and its purpose}}",
     "subElements": [
@@ -62,74 +63,77 @@ Also where information on possible values for categorys and higher and lower bou
   },
   {
     "element": "{{arrayElement}}",
-    "type": "Array({{subtype}})",
+    "type": "array({{subtype}})",
     "description": "{{brief description of the array}}",
     "notes": ""
   },
   {
     "element": "{{categoryElement}}",
-    "type": "Category({{subtype}})",
+    "type": "category({{subtype}})",
     "description": "{{brief description of the category element}}",
     "notes": "Possible values: {{list of allowed values}}"
   }
 ]
+```
 
 ### Example ###  
+```json
 [
   {
     "element": "firstName",
-    "type": "String",
+    "type": "string",
     "description": "The given name of the user.",
     "notes": "Should be properly capitalized. Example: 'John'."
   },
   {
     "element": "age",
-    "type": "Int",
+    "type": "int",
     "description": "The age of the user in years.",
     "notes": ""
   },
   {
     "element": "emailAddress",
-    "type": "String",
+    "type": "string",
     "description": "The primary contact email for the user.",
     "notes": "email format (e.g., name@example.com)."
   },
   {
     "element": "accountType",
-    "type": "Category(String)",
+    "type": "category(string)",
     "description": "The type of account the user holds.",
     "notes": "Possible values: 'free', 'premium', 'enterprise'."
   },
   {
     "element": "hobbies",
-    "type": "Array(String)",
+    "type": "array(string)",
     "description": "A list of hobbies the user enjoys.",
     "notes": ""
   },
   {
     "element": "address",
-    "type": "Object",
+    "type": "object",
     "description": "The user's primary mailing address.",
     "notes": "All sub-elements are required.",
     "subElements": [
       {
         "element": "street",
-        "type": "String",
+        "type": "string",
         "description": "Street name and number.",
         "notes": ""
       },
       {
         "element": "city",
-        "type": "String",
+        "type": "string",
         "description": "City of residence.",
         "notes": ""
       },
       {
         "element": "postalCode",
-        "type": "String",
+        "type": "string",
         "description": "Postal or ZIP code.",
         "notes": "Format depends on country."
       }
     ]
   }
 ]
+```
