@@ -1,0 +1,44 @@
+[
+  {
+    "element": "client",
+    "type": "string",
+    "description": "The name of the client for whom the job was completed.",
+    "notes": ""
+  },
+  {
+    "element": "date",
+    "type": "string",
+    "description": "The date the job completion form was filled out.",
+    "notes": "Format: 'Month DD, YYYY'."
+  },
+  {
+    "element": "project",
+    "type": "string",
+    "description": "The title or short description of the project or service performed.",
+    "notes": ""
+  },
+  {
+    "element": "description",
+    "type": "string",
+    "description": "Detailed explanation of the work completed during the service call.",
+    "notes": ""
+  },
+  {
+    "element": "comments",
+    "type": "string",
+    "description": "Additional notes or observations about the job or equipment.",
+    "notes": ""
+  },
+  {
+    "element": "reviewedBy",
+    "type": "string",
+    "description": "The name or signature of the person who reviewed and approved the completed job.",
+    "notes": ""
+  },
+  {
+    "element": "reviewDate",
+    "type": "string",
+    "description": "The date the review was completed and signed off.",
+    "notes": "Format: 'Month DD, YYYY'."
+  }
+]
