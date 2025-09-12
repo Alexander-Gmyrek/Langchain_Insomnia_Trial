@@ -22,50 +22,73 @@ def encode_image(image_path):
     except Exception as e:
       raise Exception(f"Error encoding image: {str(e)}")
     
+class Image_To_JSON:
+  settings: Settings
+  model: any
 
-
-# Takes an image and a JSONformat from the user and returns a JSON object in the specified format
-# To do this, it uses a chat model to interpret the image and generate the JSON object
-def image_to_json(image_path: str, json_format: str, model) -> str:
-    # Load and preprocess the image
-    image_data = "https://writeforbusiness.com/sites/career/files/images/wfb/Chapter_13/143_2.png"
-    
-    
-    # Create a prompt for the chat model
-    input=[
-        {
-            "role": "user",
-            "content": [
-                { "type": "text", "text": "Gather data from this image based off the JSON format provided. Do not holucinate or make up data." },
-                { "type": "text", "text": f"Return the result in a JSON created from objects in this format: {json_format}" },
-                { "type": "text", "text": """Example: if you see {"element": "date", "type": "string"...} then just include "date": "date you see" in the json""" },
-                {
-                    "type": "image_url",
-                    "image_url": {
-                      "url": image_data
-                    },
-                },
-            ],
-        }
-    ]
-    
-    
-    # Get the response from the chat model
-    response = model.invoke(input)
-    
-    # Extract and return the JSON object from the response
-    return response.content
+  def __init__(self, settings: Settings):
+    self.settings = settings
+    os.environ["OPENAI_API_KEY"] = settings.openai_api_key
+    self.model = init_chat_model(settings.model, model_provider=settings.model_provider)
+  # Takes an image url and a JSONformat from the user and returns a JSON object in the specified format
+  # To do this, it uses a chat model to interpret the image and generate the JSON object
+  def image_to_json(self, image_url: str, json_format: str, model) -> str:
+      image_data = image_url
+      
+      # Create a prompt for the chat model
+      input=[
+          {
+              "role": "user",
+              "content": [
+                  { "type": "text", "text": "Gather data from this image based off the JSON format provided. Do not holucinate or make up data." },
+                  { "type": "text", "text": f"Return the result in a JSON created from objects in this format: {json_format}" },
+                  { "type": "text", "text": """Example: if you see {"element": "date", "type": "string"...} then just include "date": "date you see" in the json""" },
+                  {
+                      "type": "image_url",
+                      "image_url": {
+                        "url": image_data
+                      },
+                  },
+              ],
+          }
+      ]
+      
+      # Get the response from the chat model
+      response = model.invoke(input)
+      
+      # Extract and return the JSON object from the response
+      return response.content
+  
+  def generate_JSON_format(self, image_url: str) -> str:
+      image_data = image_url
+      with open("Prompt_For_Generating_Fomat.md", "r") as f:
+        imageToJSONformatPrompt = f.read()
+      # Create a prompt for the chat model
+      input=[
+          {
+              "role": "user",
+              "content": [
+                  { "type": "text", "text": imageToJSONformatPrompt },
+                  {
+                      "type": "image_url",
+                      "image_url": {
+                        "url": image_data
+                      },
+                  },
+              ],
+          }
+      ]
+      
+      # Get the response from the chat model
+      response = self.model.invoke(input)
+      
+      # Extract and return the JSON object from the response
+      return response.content
 
 def main():
     print("In Progress")
-    try:
-      settings = Settings()
-    except Exception as e:
-      print(f"Error loading settings: {str(e)}")
-      return
-    os.environ["OPENAI_API_KEY"] = settings.openai_api_key
-    model = init_chat_model(settings.model, model_provider=settings.model_provider)
-    image_path = """TestSamples/example_filled_out_form.png"""
+    myImageToJSON = Image_To_JSON(Settings())
+    image_path = """https://writeforbusiness.com/sites/career/files/images/wfb/Chapter_13/143_2.png"""
     json_format = """TestSamples/testJSONformat.json"""
     # Read the JSON format from the file
     try:
@@ -78,13 +101,26 @@ def main():
       print(f"Error reading JSON format file: {str(e)}")
       return  
 
+    print("Test 1: Generate JSON from image with provided format")
     try:
-      result = image_to_json(image_path, json_format, model)
+      result = myImageToJSON.image_to_json(image_path, json_format, myImageToJSON.model)
       print("Result:", result)
     except Exception as e:
       print(f"Error processing image to JSON: {str(e)}")
 
+    print("Test 2: Generate JSON format from image")
+    try:
+      result_format = myImageToJSON.generate_JSON_format(image_path)
+      print("Generated JSON Format:", result_format)
+    except Exception as e:
+      print(f"Error generating JSON format from image: {str(e)}")
     
+    print("Test 3: Generate JSON from image with generated format")
+    try:
+      result2 = myImageToJSON.image_to_json(image_path, result_format, myImageToJSON.model)
+      print("Result with generated format:", result2)
+    except Exception as e:
+      print(f"Error processing image to JSON with generated format: {str(e)}")
 
 
 if __name__ == "__main__":
