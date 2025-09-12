@@ -34,15 +34,17 @@ class Image_To_JSON:
   # To do this, it uses a chat model to interpret the image and generate the JSON object
   def image_to_json(self, image_url: str, json_format: str, model) -> str:
       image_data = image_url
+
+      with open("Prompt_For_Getting_Data_From_Image.md", "r") as f:
+        imageToJSONPrompt = f.read()
       
       # Create a prompt for the chat model
       input=[
           {
               "role": "user",
               "content": [
-                  { "type": "text", "text": "Gather data from this image based off the JSON format provided. Do not holucinate or make up data." },
-                  { "type": "text", "text": f"Return the result in a JSON created from objects in this format: {json_format}" },
-                  { "type": "text", "text": """Example: if you see {"element": "date", "type": "string"...} then just include "date": "date you see" in the json""" },
+                  { "type": "text", "text": imageToJSONPrompt },
+                  { "type": "text", "text": f"json_format: {json_format}" },
                   {
                       "type": "image_url",
                       "image_url": {
