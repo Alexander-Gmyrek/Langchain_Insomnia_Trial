@@ -61,7 +61,7 @@ class Image_To_JSON:
       # Extract and return the JSON object from the response
       return response.content
   
-  def generate_JSON_format(self, image_url: str) -> str:
+  def generate_JSON_format_from_image(self, image_url: str) -> str:
       image_data = image_url
       with open("Prompt_For_Generating_Fomat.md", "r") as f:
         imageToJSONformatPrompt = f.read()
@@ -77,6 +77,25 @@ class Image_To_JSON:
                         "url": image_data
                       },
                   },
+              ],
+          }
+      ]
+      
+      # Get the response from the chat model
+      response = self.model.invoke(input)
+      
+      # Extract and return the JSON object from the response
+      return response.content
+  def generate_JSON_format_from_JSON(self, example_json: str) -> str:
+      with open("Prompt_For_Getting_JSONformat_From_Example_JSON.md", "r") as f:
+        jsonToJSONformatPrompt = f.read()
+      # Create a prompt for the chat model
+      input=[
+          {
+              "role": "user",
+              "content": [
+                  { "type": "text", "text": jsonToJSONformatPrompt },
+                  { "type": "text", "text": f"example_json: {example_json}" },
               ],
           }
       ]
@@ -112,7 +131,7 @@ def main():
 
     print("Test 2: Generate JSON format from image")
     try:
-      result_format = myImageToJSON.generate_JSON_format(image_path)
+      result_format = myImageToJSON.generate_JSON_format_from_image(image_path)
       print("Generated JSON Format:", result_format)
     except Exception as e:
       print(f"Error generating JSON format from image: {str(e)}")

@@ -27,22 +27,35 @@ def image_to_json_endpoint():
         return jsonify({"result": result})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-   
-    
+
+
 @app.route("/generate_json_format", methods=["POST"])
 def generate_json_format_endpoint():
     data = request.json
-    if not data or "image_url" not in data:
-        return jsonify({"error": "Invalid input, 'image_url' is required."}), 400
     
-    image_url = data["image_url"]
+    if not data:
+        return jsonify({"error": "Invalid input, no data provided"}), 400
+    
     if "settings" not in data:
         settings = img2json.Settings()
     else:
         settings = img2json.Settings(**data["settings"])
     try:
         myImageToJSON = img2json.Image_To_JSON(settings)
-        result = myImageToJSON.generate_JSON_format(image_url)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+    if "image_url" in data:
+        example_data = data["image_url"]
+        generate_json_format = myImageToJSON.generate_JSON_format_from_image
+    elif "example_json" in data:
+        example_data = data["example_json"]
+        generate_json_format = myImageToJSON.generate_JSON_format_from_JSON
+    else:
+        return jsonify({"error": "Invalid input, 'image_url' or 'example_json' is required."}), 400
+    
+    try:
+        result = generate_json_format(example_data)
         return jsonify({"result": result})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
